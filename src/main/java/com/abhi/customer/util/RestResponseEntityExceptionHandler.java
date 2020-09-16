@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.abhi.customer.dto.ErrorDto;
+
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 	
@@ -17,8 +19,10 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
 	@ExceptionHandler(value = { InvalidInputException.class })
 	protected ResponseEntity<Object> handleConflict(Exception ex, WebRequest request) {
-		String bodyOfResponse = "Exception : " + ex.getMessage();
 		EXE_LOGGER.error(ex.getMessage(), ex);
-		return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+		ErrorDto error = new ErrorDto("Exception : " + ex.getMessage());
+		return handleExceptionInternal(ex, error, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	}
+	
+	
 }

@@ -14,6 +14,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.abhi.customer.domain.Customer;
 import com.abhi.customer.dto.CustomerDto;
@@ -23,6 +24,7 @@ import com.abhi.customer.util.CustomerBeanUtility;
 import com.abhi.customer.util.InvalidInputException;
 
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
 class CustomerServiceTest {
 
 	@Mock

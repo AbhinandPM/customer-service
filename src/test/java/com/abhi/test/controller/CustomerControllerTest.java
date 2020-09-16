@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -19,9 +20,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.abhi.customer.controller.CustomerController;
 import com.abhi.customer.dto.CustomerDto;
 import com.abhi.customer.service.CustomerService;
+import com.abhi.customer.util.InvalidInputException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(CustomerController.class)
+@ActiveProfiles("test")
 class CustomerControllerTest {
 
 	@Autowired
@@ -53,7 +56,6 @@ class CustomerControllerTest {
         		.andExpect(jsonPath("$.lastname", Matchers.equalTo(customer.getLastname())))
         		.andExpect(jsonPath("$.id", Matchers.equalTo(1)))
 				.andReturn();
-
 	}
 	
 	@Test
@@ -78,6 +80,25 @@ class CustomerControllerTest {
         		.andExpect(jsonPath("$.lastname", Matchers.equalTo(customer.getLastname())))
         		.andExpect(jsonPath("$.id", Matchers.equalTo(1)))
         		;
+    }
+	
+	@Test
+    void tesRegisterCustomerWithNullValue() throws Exception {
+        CustomerDto customer = new CustomerDto();
+        
+        customer.setFirstname("John");
+        customer.setLastname("Doe");
+        customer.setUsername("john");
+        customer.setAddress("Abc");
+        customer.setContactNo(9384483234L);
+        String json = mapper.writeValueAsString(customer);
+        
+        when(customerService.saveCustomer(ArgumentMatchers.any()))
+        	.thenThrow(InvalidInputException.class);
+        
+		mockMvc.perform(post("/customer").contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8")
+                .content(json).accept(MediaType.APPLICATION_JSON))
+        		.andExpect(status().isBadRequest());
     }
 
 }

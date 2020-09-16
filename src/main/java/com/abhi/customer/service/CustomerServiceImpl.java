@@ -1,5 +1,6 @@
 package com.abhi.customer.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ public class CustomerServiceImpl implements CustomerService {
 		if(null == customerDto) {
 			throw new InvalidInputException("Customer Details are Required");
 		}
+		customerDto.setStatus(1L);
+		customerDto.setCreatedDate(LocalDateTime.now());
 		List<Customer> customerLst = customerRepo.findByUsername(customerDto.getUsername());
 		if(null != customerLst && !customerLst.isEmpty()) {
 			throw new InvalidInputException("Username already exists");
