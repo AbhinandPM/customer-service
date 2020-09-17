@@ -34,7 +34,7 @@ class CustomerServiceTest {
 	private CustomerServiceImpl customerService;
 
 	@Test
-	void shouldCreateCustomer() {
+	void shouldCreateCustomer() throws InvalidInputException {
 		CustomerDto customer = new CustomerDto();
 		customer.setId(1L);
 		customer.setFirstname("john");
@@ -47,13 +47,9 @@ class CustomerServiceTest {
 
 		when(customerRepo.save(ArgumentMatchers.any())).thenReturn(CustomerBeanUtility.convertToDomain(customer));
 
-		try {
-			CustomerDto result = customerService.saveCustomer(customer);
-			assertThat(result).isNotNull();
-			assertThat(result.getId()).isEqualTo(1L);
-		} catch (InvalidInputException e) {
-			e.printStackTrace();
-		}
+		CustomerDto result = customerService.saveCustomer(customer);
+		assertThat(result).isNotNull();
+		assertThat(result.getId()).isEqualTo(1L);
 	}
 
 	@Test
